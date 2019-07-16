@@ -17,7 +17,7 @@
             "esnext.asynciterable"
         ],
         "rootDir": ".",
-
+        "outDir": "build",
         "target": "es6"
     },
     "include": [
