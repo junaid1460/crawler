@@ -2,7 +2,9 @@ import fetch from 'node-fetch';
 import { parse } from 'node-html-parser';
 import { URL } from "url";
 
-
+/**
+ * This may become another data store if persistence is necessity
+ */
 const urlsMap: {
     [name: string]: {
         [key: string]: number
@@ -19,11 +21,16 @@ async function parseUrl(_url: string, base: string) {
 export class Crawler {
 
     constructor(
-        private fetchFunc: typeof fetch, 
-        private context: {hostName: string, baseUrl: string, startUrl: string},
-        ) {
-    
-    }
+         // A fetch like func which basically accepts url and resturns response
+        private fetchFunc: (url: string) => ReturnType<typeof fetch>,
+        private context: {
+            hostName: string, 
+            baseUrl: string, 
+            startUrl: string,
+            maxUrls: number, // Maximum urls to fetch
+            verbose: boolean
+        },
+        ) {}
 
 
     /***
@@ -31,52 +38,54 @@ export class Crawler {
      * @param _url String URL
      * @param callBack An async delegate (basically reference to itself - type)
      */
-    async  addEntryAndFetch(_url: string) {
-
+    async  crawl(_url: string) {
+        // Parse
         const url = await parseUrl(_url, this.context.baseUrl).catch(e => {
         
         })
 
-        { // Sync block
-            if(!url) {
-                return;
-            }
-            
-            if(url.host != this.context.hostName) {
-                return;
-            }
-
-
-
-            const queryStrippedUrl = `${url.protocol}//${url.host}${url.pathname || "/"}`
-
-            urlsMap[queryStrippedUrl] = urlsMap[queryStrippedUrl] || {}
-            const search  = url.search   || '<current>'
-            
-            if(urlsMap[queryStrippedUrl]![search]) {
-                urlsMap[queryStrippedUrl]![search] += 1;
-                return;
-            } else {
-                urlsMap[queryStrippedUrl]![search]  = 1
-            }
-
+        // Validation
+        if(!url) {
+            return;
         }
         
+        if(url.host != this.context.hostName) {
+            return;
+        }
+
+
+        // Add entry
+        const queryStrippedUrl = `${url.protocol}//${url.host}${url.pathname || "/"}`
+
+        urlsMap[queryStrippedUrl] = urlsMap[queryStrippedUrl] || {}
+        const search  = url.search   || '<current>'
+        
+
+        if(urlsMap[queryStrippedUrl]![search]) {
+            urlsMap[queryStrippedUrl]![search] += 1;
+            return;
+        } else {
+            urlsMap[queryStrippedUrl]![search]  = 1
+        }
+
+        
+        // Fetch
         return this.fetchFunc(url.toString())
             .then( (e) => {
                 return e.text();
             })
             .then( (e) => {
-                    console.log(`Fetching ${_url}`, e.substr(0, 50));
-                    (parse(e) as any)
+                    console.log(`Duplicates: ${Object.keys(urlsMap[queryStrippedUrl]!).length}  Fetching ${_url}`, e.substr(0, 50));
+                    const tasks = (parse(e) as any)
                     .querySelectorAll('a')
                     .map((element: any) =>  element.attributes.href)
-                    .map((currentUrl: string) => this.addEntryAndFetch(currentUrl))
-                
+                    .map((currentUrl: string) => this.crawl(currentUrl))
+                    return Promise.all(tasks)
             })
     }
+
     start() {
-       this.addEntryAndFetch(this.context.startUrl)
+       return this.crawl(this.context.startUrl)
     }
 }
 
