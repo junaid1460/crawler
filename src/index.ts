@@ -14,7 +14,7 @@ const mediumCrawler = new Crawler(
          baseUrl: `https://${mediumHostName}`,
          hostName: mediumHostName,
          startUrl: `https://${mediumHostName}`,
-         maxRootUrls: 5,
+         depth: 2,
          verbose: true
      }
  )
