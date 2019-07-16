@@ -1,3 +1,6 @@
+/**
+ * Class wraps any function and throttles call to N at a time
+ */
 export class ThrottledAsyncCalls<T extends (...args: any) => F, G, F extends Promise<G> = ReturnType<T>,> {
     private active: boolean = false;
 
