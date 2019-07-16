@@ -1,6 +1,9 @@
 export class ThrottledAsyncCalls<T extends (...args: any) => F, G, F extends Promise<G> = ReturnType<T>,> {
     private active: boolean = false;
     private queue: (()  => any)[] = []
+    get size () {
+        return this.queue.length
+    }
     constructor(private func: T){}
     call(...args: Parameters<T>) {
         const closurev = new Promise<G>((resolve, reject)=> {
@@ -27,6 +30,6 @@ export class ThrottledAsyncCalls<T extends (...args: any) => F, G, F extends Pro
     static wrap< T extends (...args: any) => any>(func: T) {
         const obj = new ThrottledAsyncCalls(func)
         const newFunc =obj.call
-        return newFunc.bind(obj) as typeof newFunc
+        return { func: newFunc.bind(obj) as typeof newFunc, object: obj}
     }
 }

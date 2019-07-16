@@ -4,7 +4,7 @@ import { ThrottledAsyncCalls } from './async_throttle';
  async function  test  ( x: number) {
   return x
 }
-const func = ThrottledAsyncCalls.wrap(test)
+const {func: func, object: boundObject} = ThrottledAsyncCalls.wrap(test)
 
 
 
@@ -24,8 +24,10 @@ const func = ThrottledAsyncCalls.wrap(test)
 }
 
 async function myTest() {
-    await Promise.all(new Array(10000).fill(0).map((e, index) =>  start(index))).then(e =>  {
-        console.log(func)
+    await Promise.all(new Array(10000).fill(0).map((e, index) =>  start(index))).then(async e =>  {
+        if(boundObject.size != 0) {
+            return Promise.reject("Did not execute everything from queue")
+        }
     })
 }
 
