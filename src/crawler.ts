@@ -36,7 +36,7 @@ export class Crawler {
             hostName: string, 
             baseUrl: string, 
             startUrl: string,
-            maxRootUrls?: number, // Maximum urls to fetch, it doesn't mean it will exact number
+            depth?: number, // Maximum urls to fetch, it doesn't mean it will exact number
             verbose?: boolean
         },
         ) {}
@@ -47,8 +47,8 @@ export class Crawler {
      * @param _url String URL
      * @param callBack An async delegate (basically reference to itself - type)
      */
-    async  crawl(_url: string) {
-        if(this.context.maxRootUrls &&  this.crawlCount >  this.context.maxRootUrls) {
+    async  crawl(_url: string, depth: number = 0) {
+        if(this.context.depth &&  depth >=  this.context.depth!) {
             return
         }
         // Parse
@@ -92,7 +92,7 @@ export class Crawler {
                     const tasks = (parse(e) as any)
                     .querySelectorAll('a')
                     .map((element: any) =>  element.attributes.href)
-                    .map((currentUrl: string) => this.crawl(currentUrl))
+                    .map((currentUrl: string) => this.crawl(currentUrl, depth + 1))
                     return Promise.all(tasks)
             })
     }
