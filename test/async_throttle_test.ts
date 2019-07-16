@@ -4,7 +4,10 @@ import { ThrottledAsyncCalls } from '../src/async_throttle';
  async function  test  ( x: number) {
   return x
 }
-const {func: func, object: boundObject} = ThrottledAsyncCalls.wrap(test)
+const {func: func, object: boundObject} = ThrottledAsyncCalls.wrap({
+    concurrency:  4,
+    func: test
+})
 
 
 

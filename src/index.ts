@@ -6,7 +6,10 @@ import { Utils } from './utils';
 
 const mediumHostName = "medium.com"
 const mediumCrawler = new Crawler(
-     ThrottledAsyncCalls.wrap(fetch).func,
+     ThrottledAsyncCalls.wrap({
+         concurrency:  5,
+         func: fetch
+     }).func,
      {
          baseUrl: `https://${mediumHostName}`,
          hostName: mediumHostName,

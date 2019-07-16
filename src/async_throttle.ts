@@ -1,3 +1,8 @@
+interface ThrottlerOptions<T> {
+    concurrency: number,
+    func: T,
+}
+
 /**
  * Class wraps any function and throttles call to N at a time
  */
@@ -14,10 +19,10 @@ export class ThrottledAsyncCalls<T extends (...args: any) => F, G, F extends Pro
     get size () {
         return this.queue.length
     }
-    constructor(private func: T){}
+    constructor(private options:ThrottlerOptions<T> ){}
     call(...args: Parameters<T>) {
         const closurev = new Promise<G>((resolve, reject)=> {
-            const func =  () =>  this.func(...(args as any)).then(response => resolve(response)).catch(err => reject(err))
+            const func =  () =>  this.options.func(...(args as any)).then(response => resolve(response)).catch(err => reject(err))
             this.queue.push(func)
             if(!this.active) {
                 this.active = true;
@@ -37,8 +42,8 @@ export class ThrottledAsyncCalls<T extends (...args: any) => F, G, F extends Pro
         this.exec()
     }
 
-    static wrap< T extends (...args: any) => any>(func: T) {
-        const obj = new ThrottledAsyncCalls(func)
+    static wrap< T extends (...args: any) => any>(opt: ThrottlerOptions<T> ) {
+        const obj = new ThrottledAsyncCalls(opt)
         const newFunc =obj.call
         return { func: newFunc.bind(obj) as typeof newFunc, object: obj}
     }
