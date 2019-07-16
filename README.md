@@ -1,4 +1,5 @@
 # Simple crawler
+<span class="badge-npmversion"><a href="https://www.npmjs.com/package/@junaid1460/crawler" title="View this project on NPM"><img src="https://img.shields.io/npm/v/@junaid1460/crawler.svg" alt="NPM version" /></a></span>
 Crawls hyperlink from provided base url
 
 Example:
