@@ -1,6 +1,10 @@
 # Simple crawler
 <span class="badge-npmversion"><a href="https://www.npmjs.com/package/@junaid1460/crawler" title="View this project on NPM"><img src="https://img.shields.io/npm/v/@junaid1460/crawler.svg" alt="NPM version" /></a></span>
 Crawls hyperlink from provided base url
+Features
+ - Generic
+ - Custom depth
+ - Handled DOS by limited calls (check below how it's done)
 
 Example:
 ```typescript
@@ -29,6 +33,10 @@ mediumCrawler.start().then(async (e) => {
 ```
 
 The repo contains also a simple wrapper to limit call concurreny to specified number.
+It doesn't matter which function you are wrapping
+  - Limits concurreny
+  - No ugly wrappers, neat code
+  - Treat it like your `async` function and do `.then`,  everything is handled.
 
 Example
 ```typescript
@@ -39,7 +47,7 @@ async function  test(x: number) {
   return x + 1
 }
 
-// Simple and powerfiul
+// Simple, yet powerful
 const {func: func, object: boundObject} = ThrottledAsyncCalls.wrap({
     concurrency:  4,  // Max concurrent calls 
     func: test // function to wrap
@@ -67,8 +75,6 @@ start(1).then(async e => {
 })
 
 ```
-
-
 
 # License
 MIT
