@@ -1,4 +1,9 @@
 version: "3.1"
 services: 
-  redis: 
-    image: redis-alpine
+  example:
+    image: node:10
+    volumes: ["./:/home/node/app"]
+    working_dir: '/home/node/app'
+    command: bash -c "npm i && npm run build && npm run example"
+    ports: ["9000:8000"]
+
