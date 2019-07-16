@@ -1,5 +1,12 @@
 export class ThrottledAsyncCalls<T extends (...args: any) => F, G, F extends Promise<G> = ReturnType<T>,> {
     private active: boolean = false;
+
+
+    /**
+     * This data store may go as redis or SQS or any other
+     * if planning crawl from multiple instances / state maintainance
+     * which would eventually make this class a task runner like celery
+     */
     private queue: (()  => any)[] = []
     get size () {
         return this.queue.length
