@@ -4,7 +4,7 @@
   "description": "Web Scraper",
   "main": "src/index.js",
   "scripts": {
-    "prepublish": "tsc"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -21,16 +21,12 @@
   },
   "homepage": "https://github.com/junaid1460/hapiest#readme",
   "dependencies": {
-    "@types/joi": "^14.3.3",
-    "hapi": "^18.1.0",
     "node-fetch": "^2.6.0",
-    "node-html-parser": "^1.1.16",
-    "reflect-metadata": "^0.1.13"
+    "node-html-parser": "^1.1.16"
   },
   "devDependencies": {
     "@types/hapi": "^18.0.2",
     "@types/node-fetch": "^2.3.7",
-    "joi": "^14.3.1",
     "typescript": "^3.4.5"
   },
   "prettier": {
