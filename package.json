@@ -1,5 +1,5 @@
 {
-  "name": "@junaid1460/scraper",
+  "name": "@junaid1460/crawler",
   "version": "1.0.26",
   "description": "Web Scraper",
   "main": "src/index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/junaid1460/hapiest.git"
+    "url": "git+https://github.com/junaid1460/crawler.git"
   },
   "keywords": [
     "hapi",
@@ -17,9 +17,9 @@
   "author": "Junaid",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/junaid1460/hapiest/issues"
+    "url": "https://github.com/junaid1460/crawler/issues"
   },
-  "homepage": "https://github.com/junaid1460/hapiest#readme",
+  "homepage": "https://github.com/junaid1460/crawler#readme",
   "dependencies": {
     "node-fetch": "^2.6.0",
     "node-html-parser": "^1.1.16"
