@@ -1,4 +1,4 @@
-import { ThrottledAsyncCalls } from './async_throttle';
+import { ThrottledAsyncCalls } from '../src/async_throttle';
 
 
  async function  test  ( x: number) {
