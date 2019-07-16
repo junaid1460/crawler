@@ -9,7 +9,7 @@
             },
             "console": false,
             "name": "Test",
-            "outFiles": ["${workspaceRoot}/src/**/*"],
+            "outFiles": ["${workspaceRoot}/build/**/*"],
             "program": "${workspaceRoot}/src/index.ts",
             "request": "launch",
             "runtimeArgs": ["--nolazy"],
