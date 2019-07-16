@@ -14,7 +14,7 @@ const mediumCrawler = new Crawler(
          baseUrl: `https://${mediumHostName}`,
          hostName: mediumHostName,
          startUrl: `https://${mediumHostName}`,
-         depth: 2,
+         depth: 3,
          verbose: true
      }
  )
@@ -24,14 +24,6 @@ interface CrawlResult {
     referenceCount: number;
     queryParams: string[]
 }
-
-mediumCrawler.start().then(async (e) => {
-    // Now process data
-    const value: CrawlResult[] = await Promise.all(Utils.mapToArray(e).map(({key, value}) => {
-        return getRefCountAndParams(key, value)
-    }))
-    console.log()
-})
 
 
 
@@ -53,3 +45,16 @@ async function getRefCountAndParams(baseUrl: string, ref: CrawlerSearchRef): Pro
     }
 }
 
+
+// Start
+mediumCrawler.start().then(async (e) => {
+    // Now process data
+    const value: CrawlResult[] = await Promise.all(Utils.mapToArray(e).map(({key, value}) => {
+        return getRefCountAndParams(key, value)
+    }))
+    return value;
+}).then(result => {
+    // Do something with it
+    
+
+})
