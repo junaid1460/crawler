@@ -88,7 +88,8 @@ export class Crawler {
                 return e.text();
             })
             .then( (e) => {
-                    console.log(`Total: ${this.crawlCount} Fetching ${_url}`, e.substr(0, 50));
+                    if(this.context.verbose)
+                        console.log(`Total: ${this.crawlCount} Fetching ${_url}`, e.substr(0, 50));
                     const tasks = (parse(e) as any)
                     .querySelectorAll('a')
                     .map((element: any) =>  element.attributes.href)
