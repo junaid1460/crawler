@@ -4,7 +4,8 @@
   "description": "Web Scraper",
   "main": "src/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "example": "node build/src/example.js"
   },
   "repository": {
     "type": "git",
