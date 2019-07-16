@@ -11,16 +11,21 @@ async function parseUrl(_url: string, base: string) {
     return new URL(_url, base);
 }
 
+export const SelfToken = "<current>"
+
+export type CrawlerSearchRef =  {
+    [key: string]: number
+} 
+export type CrawlerResult  = {
+    [name: string]:CrawlerSearchRef
+} 
+
 export class Crawler {
 
     /**
      * This may become another data store if persistence is necessity
      */
-     urlsMap: {
-        [name: string]: {
-            [key: string]: number
-        }| undefined
-    } = {}
+     urlsMap: CrawlerResult = {}
 
      crawlCount  = 0
 
@@ -65,7 +70,7 @@ export class Crawler {
         const queryStrippedUrl = `${url.protocol}//${url.host}${url.pathname || "/"}`
 
         this.urlsMap[queryStrippedUrl] = this.urlsMap[queryStrippedUrl] || {}
-        const search  = url.search   || '<current>'
+        const search  = url.search   || SelfToken
         
 
         if(this.urlsMap[queryStrippedUrl]![search]) {
