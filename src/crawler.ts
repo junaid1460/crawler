@@ -2,14 +2,7 @@ import fetch from 'node-fetch';
 import { parse } from 'node-html-parser';
 import { URL } from "url";
 
-/**
- * This may become another data store if persistence is necessity
- */
-const urlsMap: {
-    [name: string]: {
-        [key: string]: number
-    }| undefined
-} = {}
+
 
 /**
  * Function wraps error handling with promise, while parsing url
@@ -20,6 +13,17 @@ async function parseUrl(_url: string, base: string) {
 
 export class Crawler {
 
+    /**
+     * This may become another data store if persistence is necessity
+     */
+     urlsMap: {
+        [name: string]: {
+            [key: string]: number
+        }| undefined
+    } = {}
+
+     crawlCount  = 0
+
     constructor(
          // A fetch like func which basically accepts url and resturns response
         private fetchFunc: (url: string) => ReturnType<typeof fetch>,
@@ -27,8 +31,8 @@ export class Crawler {
             hostName: string, 
             baseUrl: string, 
             startUrl: string,
-            maxUrls: number, // Maximum urls to fetch
-            verbose: boolean
+            maxRootUrls?: number, // Maximum urls to fetch, it doesn't mean it will exact number
+            verbose?: boolean
         },
         ) {}
 
@@ -39,6 +43,9 @@ export class Crawler {
      * @param callBack An async delegate (basically reference to itself - type)
      */
     async  crawl(_url: string) {
+        if(this.context.maxRootUrls &&  this.crawlCount >  this.context.maxRootUrls) {
+            return
+        }
         // Parse
         const url = await parseUrl(_url, this.context.baseUrl).catch(e => {
         
@@ -57,15 +64,16 @@ export class Crawler {
         // Add entry
         const queryStrippedUrl = `${url.protocol}//${url.host}${url.pathname || "/"}`
 
-        urlsMap[queryStrippedUrl] = urlsMap[queryStrippedUrl] || {}
+        this.urlsMap[queryStrippedUrl] = this.urlsMap[queryStrippedUrl] || {}
         const search  = url.search   || '<current>'
         
 
-        if(urlsMap[queryStrippedUrl]![search]) {
-            urlsMap[queryStrippedUrl]![search] += 1;
+        if(this.urlsMap[queryStrippedUrl]![search]) {
+            this.urlsMap[queryStrippedUrl]![search] += 1;
             return;
         } else {
-            urlsMap[queryStrippedUrl]![search]  = 1
+            this.crawlCount += 1
+            this.urlsMap[queryStrippedUrl]![search]  = 1
         }
 
         
@@ -75,7 +83,7 @@ export class Crawler {
                 return e.text();
             })
             .then( (e) => {
-                    console.log(`Duplicates: ${Object.keys(urlsMap[queryStrippedUrl]!).length}  Fetching ${_url}`, e.substr(0, 50));
+                    console.log(`Total: ${this.crawlCount} Fetching ${_url}`, e.substr(0, 50));
                     const tasks = (parse(e) as any)
                     .querySelectorAll('a')
                     .map((element: any) =>  element.attributes.href)
@@ -85,7 +93,9 @@ export class Crawler {
     }
 
     start() {
-       return this.crawl(this.context.startUrl)
+       return this.crawl(this.context.startUrl).then(e => {
+           return this.urlsMap
+       })
     }
 }
 
