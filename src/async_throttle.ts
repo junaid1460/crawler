@@ -37,7 +37,7 @@ export class ThrottledAsyncCalls<T extends (...args: any) => F, G, F extends Pro
             this.active = false
             return;
         }
-        const tasks = this.queue.splice(0, 5).map(task => task())
+        const tasks = this.queue.splice(0, this.options.concurrency).map(task => task())
         await Promise.all(tasks)
         this.exec()
     }
