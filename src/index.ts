@@ -1,6 +1,8 @@
  import fetch from 'node-fetch';
+import { resolve, URL } from 'url';
 import { ThrottledAsyncCalls } from './async_throttle';
-import { Crawler } from './crawler';
+import { Crawler, CrawlerSearchRef, SelfToken } from './crawler';
+import { Utils } from './utils';
 
 const mediumHostName = "medium.com"
 const mediumCrawler = new Crawler(
@@ -9,22 +11,42 @@ const mediumCrawler = new Crawler(
          baseUrl: `https://${mediumHostName}`,
          hostName: mediumHostName,
          startUrl: `https://${mediumHostName}`,
-         maxRootUrls: 10,
+         maxRootUrls: 5,
          verbose: true
      }
  )
 
-mediumCrawler.start().then( (e: any) => {
-    // Now process data
+interface CrawlResult {
+    url: string;
+    referenceCount: number;
+    queryParams: string[]
+}
 
+mediumCrawler.start().then(async (e) => {
+    // Now process data
+    const value: CrawlResult[] = await Promise.all(Utils.mapToArray(e).map(({key, value}) => {
+        return getRefCountAndParams(key, value)
+    }))
+    console.log()
 })
 
 
-function mapToArray<T>(map: {[name: string]: T}): Array<{key: string, value: T}> {
-    return Object.keys(map).map(key  => {
-        return {
-            key: key,
-            value: map[key]
-        }
+
+async function getRefCountAndParams(baseUrl: string, ref: CrawlerSearchRef): Promise<CrawlResult> {
+    const searchParams = Utils.mapToArray(ref)
+    const { value } = searchParams.reduce((p, n) => ({key: 'count', value: p.value + n.value}) )
+    const queryParams = searchParams.map(e => {
+        if(e.key == SelfToken) 
+            return new URL(baseUrl)
+        return new URL(resolve(baseUrl, e.key))
+    }).map(e => {
+        return Utils.getItemsFromIterable(e.searchParams.keys())
     })
+    const flattened = Utils.flattenArray(queryParams)
+    return {
+        referenceCount: value, 
+        queryParams: Utils.getUniqueEntries(flattened), 
+        url: baseUrl 
+    }
 }
+
