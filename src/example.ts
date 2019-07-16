@@ -14,7 +14,7 @@ const mediumCrawler = new Crawler(
          baseUrl: `https://${mediumHostName}`,
          hostName: mediumHostName,
          startUrl: `https://${mediumHostName}`,
-         depth: 3,
+         depth: 2,
          verbose: true
      }
  )
@@ -47,6 +47,7 @@ async function getRefCountAndParams(baseUrl: string, ref: CrawlerSearchRef): Pro
 
 
 // Start
+console.log("Fetching with depth 2")
 mediumCrawler.start().then(async (e) => {
     // Now process data
     const value: CrawlResult[] = await Promise.all(Utils.mapToArray(e).map(({key, value}) => {
@@ -56,5 +57,5 @@ mediumCrawler.start().then(async (e) => {
 }).then(result => {
     // Do something with it
     
-
+    console.log(JSON.stringify(result))
 })
