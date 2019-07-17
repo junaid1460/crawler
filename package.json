@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "example": "node build/src/example.js"
+    "example": "node src/example.js"
   },
   "repository": {
     "type": "git",
