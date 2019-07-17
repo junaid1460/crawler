@@ -43,9 +43,8 @@ export class Crawler {
 
 
     /***
-     * @param context Accepts const context
-     * @param _url String URL
-     * @param callBack An async delegate (basically reference to itself - type)
+     * @param _url Url
+     * @param depth root is 0
      */
     async  crawl(_url: string, depth: number = 0) {
         if(this.context.depth &&  depth >=  this.context.depth!) {
